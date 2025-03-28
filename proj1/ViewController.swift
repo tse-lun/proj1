@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import StoreKit
 
 class ViewController: UITableViewController {
     
@@ -15,6 +16,8 @@ class ViewController: UITableViewController {
         super.viewDidLoad()
         title = "Storm Viewer"
         navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareTapped))
+
 
         let fm = FileManager.default
         let path = Bundle.main.resourcePath!
@@ -46,9 +49,23 @@ class ViewController: UITableViewController {
         }
     }
     
+
+    
+    @objc
     func shareTapped() {
-        
+        requestAppReview()
     }
+    
+    func requestAppReview() {
+        guard let windowScene = UIApplication.shared
+            .connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first(where: { $0.activationState == .foregroundActive }) else {
+            return
+        }
+        AppStore.requestReview(in: windowScene)
+    }
+    
 
 }
 
